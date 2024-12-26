@@ -65,7 +65,7 @@ vars_to_export <- c(
   "path",
   "results",
   "results_grid",
-  "RSS_LOOCV",
+  "LOOCV",
   "s_grid",
   "start_time",
   "tol1",
@@ -906,9 +906,9 @@ write.csv(summary_results, summary_output_file, row.names = FALSE)
 
 print("Summary results saved to ISE_MC_results.csv")
 
-# #############################################
-# ## Illustration (Section 5)                ##
-# #############################################
+# ##############################
+# ## Data example (Section 5) ##
+# ##############################
 # 
 # vectors <- list(
 #   c(77.5, 19.5, 3.0, 10.4),
@@ -960,10 +960,10 @@ print("Summary results saved to ISE_MC_results.csv")
 # s_grid <- expand.grid(seq(0, 1, length.out = 100), seq(0, 1, length.out = 100))
 # s_grid <- s_grid[rowSums(s_grid) <= 1, ]
 # 
-# # Define the function to calculate the RSS using LOOCV for a given bandwidth b
-# RSS_LOOCV <- function(xx, y, b, method) {
+# # Define the function to calculate the LOOCV using LOOCV for a given bandwidth b
+# LOOCV <- function(xx, y, b, method) {
 #   n <- length(xx)
-#   rss <- 0
+#   res <- 0
 #   for (i in 1:n) {
 #     # Exclude the i-th observation
 #     xx_minus_i <- xx[-i]
@@ -971,15 +971,15 @@ print("Summary results saved to ISE_MC_results.csv")
 #     s <- xx[[i]] # Use double brackets to access the i-th vector directly
 #     y_i <- y[[i]] # Use double brackets to access the i-th response value directly
 #     y_hat_i <- hat_m(xx_minus_i, b, s, j, method, y_minus_i)
-#     rss <- rss + (y_i - y_hat_i) ^ 2
+#     res <- res + (y_i - y_hat_i) ^ 2
 #   }
-#   return(rss / n)
+#   return(res / n)
 # }
 # 
-# # Define the function to find the optimal bandwidth by minimizing the RSS using LOOCV
+# # Define the function to find the optimal bandwidth by minimizing the LOOCV using LOOCV
 # b_opt_LOOCV <- function(xx, y, method) {
 #   objective_function <- function(b) {
-#     RSS_LOOCV(xx, y, b, method)
+#     LOOCV(xx, y, b, method)
 #   }
 #   res <- optimize(objective_function, interval = c(min(BB), max(BB)))
 #   return(res$minimum)
@@ -991,18 +991,18 @@ print("Summary results saved to ISE_MC_results.csv")
 # 
 # print(paste("Optimal bandwidth (b):", optimal_b))
 # 
-# # Plot RSS as a function of b
+# # Plot LOOCV as a function of b
 # b_values <- seq(0.05, 1, by = 0.01)
-# rss_values <- sapply(b_values, function(b) RSS_LOOCV(xx, y, b, method))
-# results_df <- data.frame(b = b_values, RSS = rss_values)
+# loocv_values <- sapply(b_values, function(b) LOOCV(xx, y, b, method))
+# results_df <- data.frame(b = b_values, LOOCV = loocv_values)
 # 
 # # Save the plot to a PDF file in the specified path
-# plot_file <- file.path(path, "rss_b.pdf")
+# plot_file <- file.path(path, "loocv_b.pdf")
 # cairo_pdf(plot_file, width = 8, height = 5)  # Adjust width and height for aspect ratio
 # 
-# ggplot(results_df, aes(x = b, y = RSS)) +
+# ggplot(results_df, aes(x = b, y = LOOCV)) +
 #   geom_line(color = "blue") +
-#   labs(x = "b", y = "RSS") +
+#   labs(x = "b", y = "LOOCV") +
 #   theme_minimal() +
 #   theme(
 #     text = element_text(size = 16),
@@ -1012,4 +1012,4 @@ print("Summary results saved to ISE_MC_results.csv")
 # 
 # dev.off()
 # 
-# print(paste("RSS plot saved to", plot_file))
+# print(paste("LOOCV plot saved to", plot_file))
